@@ -38,6 +38,7 @@ impl Token {
       _ => false,
     }
   }
+  /// 获取运算符的优先级
   fn precedence(&self) -> i32 {
     match self {
       Token::Plus | Token::Minus => 1,
@@ -148,6 +149,17 @@ impl<'a> Expr<'a> {
         self.iter.next();
         Ok(val)
       },
+      Some(Token::LeftParen) => {
+        self.iter.next();
+        let result = self.compute_expr(1)?;
+        match self.iter.next() {
+          Some(Token::RightParen) => (),
+          _ => {
+            return Err(ExprError::Parse("Unexpected character".into()));
+          },
+        }
+        Ok(result)
+      },
       _ => {
         Err(ExprError::Parse("compute_atom".into()))
       },
@@ -170,6 +182,7 @@ impl<'a> Expr<'a> {
       }
       self.iter.next();
 
+      // 递归调用
       let atom_rhs = self.compute_expr(next_prec)?;
       match token.compute(atom_lhs, atom_rhs) {
         Some(n) => {
@@ -187,7 +200,7 @@ impl<'a> Expr<'a> {
 }
 
 fn main() {
-  let src = "100 * 2 - 300";
+  let src = "1 + (100 + 50) * 2 ^ 2";
   let mut expr = Expr::new(src);
   println!("{}", expr.eval().unwrap());
 }
