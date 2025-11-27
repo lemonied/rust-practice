@@ -8,7 +8,7 @@ impl std::fmt::Display for ExprError {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     match self {
       Self::Parse(s) => {
-        write!(f, "{}", s)
+        write!(f, "ParseError:{}", s)
       }
     }
   }
