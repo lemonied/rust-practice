@@ -92,7 +92,7 @@ pub struct SearchParams<'a> {
 impl<'a> SearchParams<'a> {
   pub fn serialize<T>(&self) -> Result<T, SerializeError<'_>>
   where
-    T: Serializable<'a>
+    T: Serializable<'a>,
   {
     T::transform(self.src)
   }
