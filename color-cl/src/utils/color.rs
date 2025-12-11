@@ -1,7 +1,16 @@
 use regex::Regex;
-use std::fmt::Display;
 
 pub struct RGBA(u8, u8, u8, f64);
+impl std::fmt::Display for RGBA {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    let rgba = if self.3 == 1.0 {
+      format!("rgb({},{},{})", self.0, self.1, self.2)
+    } else {
+      format!("rgba({},{},{},{:.2})", self.0, self.1, self.2, self.3)
+    };
+    write!(f, "{}", rgba)
+  }
+}
 
 pub struct Color {
   pub rgba: RGBA,
@@ -54,22 +63,20 @@ impl Color {
     let red = hex
       .get(0..2)
       .ok_or_else(|| format!("fail to get red {}", hex))
-      .and_then(|v| u8::from_str_radix(v, 16).map_err(|_| format!("fail to parse red {}", hex)))?;
+      .and_then(|v| u8::from_str_radix(v, 16).map_err(|err| format!("{}: {}", v, err)))?;
     let green = hex
       .get(2..4)
       .ok_or_else(|| format!("fail to get green {}", hex))
-      .and_then(|v| {
-        u8::from_str_radix(v, 16).map_err(|_| format!("fail to parse green {}", hex))
-      })?;
+      .and_then(|v| u8::from_str_radix(v, 16).map_err(|err| format!("{}: {}", v, err)))?;
     let blue = hex
       .get(4..6)
       .ok_or_else(|| format!("fail to get blue {}", hex))
-      .and_then(|v| u8::from_str_radix(v, 16).map_err(|_| format!("fail to parse blue {}", hex)))?;
+      .and_then(|v| u8::from_str_radix(v, 16).map_err(|err| format!("{}: {}", v, err)))?;
     let alpha = if hex.len() == 8 {
       hex
         .get(6..8)
         .ok_or_else(|| format!("fail to get alpha {}", hex))
-        .and_then(|v| u8::from_str_radix(v, 16).map_err(|_| format!("fail to parse alpha {}", hex)))
+        .and_then(|v| u8::from_str_radix(v, 16).map_err(|err| format!("{}: {}", v, err)))
         .and_then(|v| Ok((v as f64) / 255.0))?
     } else {
       1.0
@@ -92,13 +99,8 @@ impl Color {
     Self { rgba, hex: hex_str }
   }
 }
-impl Display for Color {
+impl std::fmt::Display for Color {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    let rgba = if self.rgba.3 == 1.0 {
-      format!("rgb({},{},{})", self.rgba.0, self.rgba.1, self.rgba.2)
-    } else {
-      format!("rgba({},{},{},{:.2})", self.rgba.0, self.rgba.1, self.rgba.2, self.rgba.3)
-    };
-    write!(f, "{} #{}", rgba, self.hex)
+    write!(f, "{} #{}", format!("{}", self.rgba), self.hex)
   }
 }
