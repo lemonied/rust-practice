@@ -1,12 +1,15 @@
 [workspace]
-members = ["box-test",
+members = [
+  "box-test",
   "color-cl",
   "color-trans",
   "expr-eval",
-  "minigrep", "rust-wintun",
+  "minigrep",
+  "rc-test",
+  "rust-wintun",
   "strings",
   "trait-test",
   "unsafe-test",
   "vector",
-  "wea-tool"
+  "wea-tool",
 ]
