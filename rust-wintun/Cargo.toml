@@ -1,0 +1,10 @@
+[package]
+name = "rust-wintun"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ctrlc = "3.5.1"
+etherparse = "0.19.0"
+httparse = "1.10.1"
+wintun = "0.5.1"
